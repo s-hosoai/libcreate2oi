@@ -230,3 +230,4 @@ int stopOI ();
 void enableDebug ();
 void disableDebug ();
 
+#endif //H_CREATEOI_GD
