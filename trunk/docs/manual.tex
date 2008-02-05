@@ -1,31 +1,3 @@
-%  manual.tex
-%
-%  This is the source file for the PDF documentation provided with
-%  COIL.  If you make changes to this file, compile it with your 
-%  favorite TeX editor.
-%
-%  Author:  Jesse DeGuire
-%
-%  This file is part of COIL.
-%
-%  COIL is free software: you can redistribute it and/or modify
-%  it under the terms of the GNU General Public License as published by
-%  the Free Software Foundation, either version 3 of the License, or
-%  (at your option) any later version.
-%
-%  COIL is distributed in the hope that it will be useful,
-%  but WITHOUT ANY WARRANTY; without even the implied warranty of
-%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%  GNU General Public License for more details.
-% 
-%  You should have received a copy of the GNU General Public License
-%  along with COIL.  If not, see <http://www.gnu.org/licenses/>.
-%
-%
-%  Versions:
-%      1.0    12 Jan 2008    Initial public release
-%
-
 \documentclass {article}
 
 \usepackage {verbatim}
@@ -137,7 +109,7 @@ normal.
 \newpage
 
 
-\section {CreateOI Function Reference}
+\section {Function Reference}
 %-------------------
 % Macro definitions
 %-------------------
@@ -169,16 +141,13 @@ normal.
 % End Definitions
 %--------------------
 
-This section describes the functions and structures used in the CreateOI library.  If you've looked at the
-\href{http://www.irobot.com/sp.cfm?pageid=294} {Create Open Interface Specification}, you will
-have a good idea of what many of these commands are capable of.  Also available are some additional
-commands which are not found in the OI.  These commands are formed as combinations of basic OI
-commands and are provided as a convenience to the user.
-
-\subsection{Function Documentation} 
 This is a list of the functions available for use with the Create, along with descriptions of what
 they do.  Some functions require special types as one of the parameters.  See the
-\hyperlink{datatypes}{next section} for more information on those types.
+\hyperlink{datatypes}{Data types} section for more information on those types.
+
+\subsection {Setup and Miscellaneous}
+Functions listed here do not directly control the Create, but are used for setting up communication
+to the robot, changing its mode, and so on.
 
 \begin {itemize}
   \item \func {\cint startOI (\cchar * serial)} {startoi}
@@ -188,7 +157,7 @@ they do.  Some functions require special types as one of the parameters.  See th
           \item [serial] The location of the serial port connected to the Create
         \end {params}
         \retnorm
-        
+ 
   \item \func {\cint setBaud (\oibaud rate)} {setbaud}
         Sets the baud rate between the Create and the computer and waits for 100$ms$ after changing
         (in compliance with the OI specification).  The default is 56kbps. \\
@@ -216,26 +185,26 @@ they do.  Some functions require special types as one of the parameters.  See th
         Create from falling in the programmer's hands. \\
         \retnorm
 
-  \item \func {\cint runDemo (\oidemo demo)} {rundemo}
-        Starts one of the Create's demo routines.  Information about each demo is available in the
-        iRobot Create instruction manual.  This will put the Create into Passive Mode. \\
-        \begin {params}
-          \item [demo] The demo to run (or {\tt DEMO\_ABORT} to stop the current demo)
-        \end {params}
-        \retnorm
+  \item \func {\cint stopOI ()} {stopoi}
+         Stops the Create and closes the serial connection to it.  The connection can be restarted
+         by calling \hyperlink {startoi}{{\tt startOI}}. \\
+         \retnorm
 
-  \item \func {\cint runCoverDemo ()} {runcoverdemo}
-        Runs the Cover demo. \\
-        \retnorm
+   \item \func {{\bf void} enableDebug ()} {enabledebug}
+         Turns on debugging, which will print serial transfers to the console window.  Reads
+         and writes will be printed in byte-aligned format as they would be transmitted through the
+         serial port.
 
-  \item \func {\cint runCoverAndDockDemo ()} {runcadd}
-        Runs the Cover and Dock demo. \\
-        \retnorm
+   \item \func {{\bf void} disableDebug ()} {disabledebug}
+         Turns off debugging so that serial transfers will no longer be printed to the console.
+\end {itemize}
 
-  \item \func {\cint runSpotDemo ()} {runspotdemo}
-        Runs the Spot demo. \\
-        \retnorm
+\subsection {Drive and Demo}
+Functions here are used to control the Create's movement.  You can move the Create either through
+its built-in demos or by directly controlling its wheel movements.  You can also tell the Create to
+wait for a given period before performing the next action.
 
+\begin {itemize}         
   \item \func {\cint drive (\short vel, \short rad)} {drive}
         Drives the Create with the given velocity (in $mm/s$) and turning radius ($mm$).  The
         velocity ranges from -500 to 500$mm/s$, with negative velocities driving the Create
@@ -300,7 +269,71 @@ they do.  Some functions require special types as one of the parameters.  See th
                 stop on collision
         \end {params}
         \ret Angle turned or \fail on error 
+
+  \item \func {\dbl waitTime (\dbl time)} {waittime}
+         Waits the given amount of time, in seconds.  The timer has a resolution of 1 microsecond,
+         or $1\times 10^{-6}$ seconds; however, accuracy of this function cannot be specified as
+         that depends on the accuracy of the operating system's timer. \\
+         \begin {params}
+           \item [time] Time to wait, in seconds
+         \end {params}
+         \ret Time passed in as parameter to this function
+
+  \item \func {\cint waitDistance (\cint dist, \cint interrupt)} {waitdist}
+         Waits for the Create to travel the given distance (in millimeters).  Distance is
+         incremented when the Create travels forward and decremented when it travels backward.  If
+         the wheels are passively rotated in either direction, the distance is incremented.  The
+         distance sensor will be reset after using this function. \\
+         If {\tt interrupt} is non-zero, this function will exit if the Create detects a possible
+         collision (bump, cliff, overcurrent, or wheel drop sensors are activated). \\
+         The distance travelled is updated once per $20ms$ or 50 times per second. \\
+         \begin {params}
+           \item [dist] Distance to travel in millimeters
+           \item [interrupt] Set to 0 to ignore collisions or non-zero to have this function exit on
+                 collision
+         \end {params}
+         \ret Distance travelled or \fail on error
+
+  \item \func {\cint waitAngle (\cint angle, \cint interrupt)} {waitangle}
+         Waits for the Create to turn the given angle (in degrees).  The angle is incremented when
+         the Create turns counterclockwise and decremented when it turns clockwise.  The angle
+         sensor will be reset after using this function.  \\
+         If {\tt interrupt} is non-zero, this function will exit if the Create detects a possible
+         collision (bump, cliff, overcurrent, or wheel drop sensors are activated). \\
+         The angle turned is updated once per $20ms$ or 50 times per second. \\
+         \begin {params}
+           \item [angle] Angle to turn in degrees
+           \item [interrupt] Set to 0 to ignore collisions or non-zero to have this function exit on
+                 collsion
+         \end {params}
+         \ret Angle turned or \fail on error
         
+  \item \func {\cint runDemo (\oidemo demo)} {rundemo}
+        Starts one of the Create's demo routines.  Information about each demo is available in the
+        iRobot Create instruction manual.  This will put the Create into Passive Mode. \\
+        \begin {params}
+          \item [demo] The demo to run (or {\tt DEMO\_ABORT} to stop the current demo)
+        \end {params}
+        \retnorm
+
+  \item \func {\cint runCoverDemo ()} {runcoverdemo}
+        Runs the Cover demo. \\
+        \retnorm
+
+  \item \func {\cint runCoverAndDockDemo ()} {runcadd}
+        Runs the Cover and Dock demo. \\
+        \retnorm
+
+  \item \func {\cint runSpotDemo ()} {runspotdemo}
+        Runs the Spot demo. \\
+        \retnorm
+\end {itemize}
+
+\subsection {Extra Functionality}
+These allow control over the Create's expansion port outputs, LEDs, and song and scripting
+capabilities.
+
+\begin {itemize}
   \item \func {\cint setLEDState (\oiled lflags, \byte pColor, \byte pInten)} {setledstate}
         Controls the state of the LEDs on top of the Create.  The Play and Advance LEDs are green
         and can either on or off.  Control these by using the \oiled flags and the logical-OR
@@ -389,20 +422,32 @@ they do.  Some functions require special types as one of the parameters.  See th
           \item [number] Song number to play (0-15)
         \end {params}
         \retnorm
+        
+  \item \func {\cint writeScript (\byte* script, \byte size)} {writescript}
+         Sends the specified script the the Create's internal memory.  A script can be up to 100
+         bytes long. \\
+         \begin {params}
+           \item [script] Script to send to Create
+           \item [size] Size, in bytes, of the script
+         \end {params}
+         \retnorm
 
-  \item \func {\cint readRawSensor (\oisensor packet, \byte* buffer, \cint size)} {readrawsensor}
-        Requests the Create to return a packet of sensor data which will be put, unformatted, into
-        the specified buffer.  Different sensors have different packet sizes, so it is up to you to
-        make sure your buffer is the proper size. \\
-        It is recommended that \hyperlink {readsensor}{{\tt readSensor}} be used instead, as it will
-        return properly formatted sensor data. \\
-        \begin {params}
-          \item [packet] Sensor packet to read
-          \item [buffer] Buffer to read raw packets into
-          \item [size] Number of bytes to read into buffer
-        \end {params}
-        \ret Number of bytes read or -1 on error
+  \item \func {\cint playScript ()} {playscript}
+         Runs the script currently stored in the Create's internal memory.  The script remains in
+         memory after it is run, allowing it to be run multiple times. \\
+         \retnorm
 
+  \item \func {\byte* getScript()} {getscript}
+         Gets the currently stored script from the Create and returns a pointer to it.  The first
+         data byte returned is the number of bytes in the script, followed by the script itself. \\
+         \ret Pointer to script or a NULL pointer on error  
+\end {itemize}
+
+\subsection {Sensors}
+These functions allow you to read the Create's various sensors.  Many of these functions require an
+\oisensor value, which corresponds to one of the Create'e 42 sensor packets.
+
+\begin {itemize}
   \item \func {\cint readSensor (\oisensor packet)} {readsensor}
         Returns data from the specified sensor in a user-readable format.  The function will not
         work for sensor groups, only single sensors.  Parameter can be one of \oisensor values. \\
@@ -473,6 +518,19 @@ they do.  Some functions require special types as one of the parameters.  See th
          Note that packets 15 and 16 are unused and so should always be 0. \\
          \ret Pointer to array of sensor data or a NULL pointer on error.
 
+   \item \func {\cint readRawSensor (\oisensor packet, \byte* buffer, \cint size)} {readrawsensor}
+        Requests the Create to return a packet of sensor data which will be put, unformatted, into
+        the specified buffer.  Different sensors have different packet sizes, so it is up to you to
+        make sure your buffer is the proper size. \\
+        It is recommended that \hyperlink {readsensor}{{\tt readSensor}} be used instead, as it will
+        return properly formatted sensor data. \\
+        \begin {params}
+          \item [packet] Sensor packet to read
+          \item [buffer] Buffer to read raw packets into
+          \item [size] Number of bytes to read into buffer
+        \end {params}
+        \ret Number of bytes read or -1 on error
+        
    \item \func {\cint readRawSensorList (\oisensor* packet\_list, \byte num\_packets, \byte* buffer,
            \cint size)} {readrawsensorlist}
          Requests the Create to return multiple raw sensor data packets.  The packets are returned in
@@ -485,80 +543,10 @@ they do.  Some functions require special types as one of the parameters.  See th
            \item [size] Number of bytes to read into buffer
          \end {params}
          \ret Number of bytes read or -1 on error
-
-   \item \func {\cint writeScript (\byte* script, \byte size)} {writescript}
-         Sends the specified script the the Create's internal memory.  A script can be up to 100
-         bytes long. \\
-         \begin {params}
-           \item [script] Script to send to Create
-           \item [size] Size, in bytes, of the script
-         \end {params}
-         \retnorm
-
-   \item \func {\cint playScript ()} {playscript}
-         Runs the script currently stored in the Create's internal memory.  The script remains in
-         memory after it is run, allowing it to be run multiple times. \\
-         \retnorm
-
-   \item \func {\byte* getScript()} {getscript}
-         Gets the currently stored script from the Create and returns a pointer to it.  The first
-         data byte returned is the number of bytes in the script, followed by the script itself. \\
-         \ret Pointer to script or a NULL pointer on error
-
-   \item \func {\dbl waitTime (\dbl time)} {waittime}
-         Waits the given amount of time, in seconds.  The timer has a resolution of 1 microsecond,
-         or $1\times 10^{-6}$ seconds; however, accuracy of this function cannot be specified as
-         that depends on the accuracy of the operating system's timer. \\
-         \begin {params}
-           \item [time] Time to wait, in seconds
-         \end {params}
-         \ret Time passed in as parameter to this function
-
-   \item \func {\cint waitDistance (\cint dist, \cint interrupt)} {waitdist}
-         Waits for the Create to travel the given distance (in millimeters).  Distance is
-         incremented when the Create travels forward and decremented when it travels backward.  If
-         the wheels are passively rotated in either direction, the distance is incremented.  The
-         distance sensor will be reset after using this function. \\
-         If {\tt interrupt} is non-zero, this function will exit if the Create detects a possible
-         collision (bump, cliff, overcurrent, or wheel drop sensors are activated). \\
-         The distance travelled is updated once per $20ms$ or 50 times per second. \\
-         \begin {params}
-           \item [dist] Distance to travel in millimeters
-           \item [interrupt] Set to 0 to ignore collisions or non-zero to have this function exit on
-                 collision
-         \end {params}
-         \ret Distance travelled or \fail on error
-
-   \item \func {\cint waitAngle (\cint angle, \cint interrupt)} {waitangle}
-         Waits for the Create to turn the given angle (in degrees).  The angle is incremented when
-         the Create turns counterclockwise and decremented when it turns clockwise.  The angle
-         sensor will be reset after using this function.  \\
-         If {\tt interrupt} is non-zero, this function will exit if the Create detects a possible
-         collision (bump, cliff, overcurrent, or wheel drop sensors are activated). \\
-         The angle turned is updated once per $20ms$ or 50 times per second. \\
-         \begin {params}
-           \item [angle] Angle to turn in degrees
-           \item [interrupt] Set to 0 to ignore collisions or non-zero to have this function exit on
-                 collsion
-         \end {params}
-         \ret Angle turned or \fail on error
-
-   \item \func {\cint stopOI ()} {stopoi}
-         Stops the Create and closes the serial connection to it.  The connection can be restarted
-         by calling \hyperlink {startoi}{{\tt startOI}}. \\
-         \retnorm
-
-   \item \func {{\bf void} enableDebug ()} {enabledebug}
-         Turns on debugging, which will print serial transfers to the console window.  Reads
-         and writes will be printed in byte-aligned format as they would be transmitted through the
-         serial port.
-
-   \item \func {{\bf void} disableDebug ()} {disabledebug}
-         Turns off debugging so that serial transfers will no longer be printed to the console.
 \end {itemize}
 
-\subsection {Type Definitions} \hypertarget{datatypes}{} 
-These are the different datatypes used for the Create functions.
+\subsection {Data Types} \hypertarget{datatypes}{} 
+These are the different data types used for COIL functions.
 
 \subsubsection {byte} \hypertarget{oibyte}{}
 A byte is the same as an {\tt unsigned char} in C, which has a size of 8 bits.  The name ``byte''
