@@ -691,7 +691,7 @@ int readSensor (oi_sensor packet)
 		case SENSOR_SONG_NUMBER:
 		case SENSOR_SONG_IS_PLAYING:
 		case SENSOR_NUM_STREAM_PACKETS:
-			buffer = malloc (sizeof(byte));
+		        buffer = (byte*) malloc (sizeof(byte));
 			if (NULL == buffer)
 				return INT_MIN;
 			*buffer = 0;
@@ -705,7 +705,7 @@ int readSensor (oi_sensor packet)
 			
 		//one-byte signed sensor
 		case SENSOR_BATTERY_TEMP:
-			buffer = malloc (sizeof(char));
+			buffer = (byte*) malloc (sizeof(char));
 			if (NULL == buffer)
 				return INT_MIN;
 			*buffer = 0;
@@ -727,7 +727,7 @@ int readSensor (oi_sensor packet)
 		case SENSOR_CLIFF_FRONT_RIGHT_SIGNAL:
 		case SENSOR_CLIFF_RIGHT_SIGNAL:
 		case SENSOR_ANALOG_SIGNAL:
-			buffer = malloc (2 * sizeof(byte));
+			buffer = (byte*) malloc (2 * sizeof(byte));
 			if (NULL == buffer)
 				return INT_MIN;
 			buffer[0] = 0; buffer[1] = 0;
@@ -747,7 +747,7 @@ int readSensor (oi_sensor packet)
 		case SENSOR_REQUESTED_RADIUS:
 		case SENSOR_REQUESTED_RIGHT_VEL:
 		case SENSOR_REQUESTED_LEFT_VEL:
-			buffer = malloc (2 * sizeof(byte));
+			buffer = (byte*) malloc (2 * sizeof(byte));
 			if (NULL == buffer)
 				return INT_MIN;
 			buffer[0] = 0; buffer[1] = 0;	
@@ -889,19 +889,19 @@ int* getAllSensors()
 	for (i = 0; i < 12; i++)
 		result[i] = buf[i];
 	
-	result[12] = (short) ((buf[12] << 8) | buf[13]);						//Distance
-	result[13] = (short) ((buf[14] << 8) | buf[15]);						//Angle
-	result[14] = buf[16];													//Charging State
-	result[15] = (buf[17] << 8) | buf[18];									//Voltage
-	result[16] = (short) ((buf[19] << 8) | buf[20]);						//Current
-	result[17] = (char) buf[21];											//Battery Temp
+	result[12] = (short) ((buf[12] << 8) | buf[13]);		//Distance
+	result[13] = (short) ((buf[14] << 8) | buf[15]);		//Angle
+	result[14] = buf[16];						//Charging State
+	result[15] = (buf[17] << 8) | buf[18];				//Voltage
+	result[16] = (short) ((buf[19] << 8) | buf[20]);		//Current
+	result[17] = (char) buf[21];					//Battery Temp
 	
 	//Battery Charge to Cliff Right Signal
 	for (i = 0; i <= 6; i++)
 		result[i + 18] = (buf[22 + 2*i] << 8) | buf[23 + 2*i];
 		
-	result[25] = buf[36];													//Cargo Bay DI
-	result[26] = (buf[37] << 8) | buf[38];									//Cargo Bay Analog
+	result[25] = buf[36];						//Cargo Bay DI
+	result[26] = (buf[37] << 8) | buf[38];				//Cargo Bay Analog
 	
 	//Charging Sources to Number Of Stream Packets
 	for (i = 0; i <= 4; i++)
