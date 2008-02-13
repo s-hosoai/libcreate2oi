@@ -221,12 +221,9 @@ int writeScript (byte* script, byte size);
 int playScript ();
 byte* getScript ();
 double waitTime (double time);
-static int stopWait();
 int waitDistance (int dist, int interrupt);
 int waitAngle (int angle, int interrupt);
 int stopOI ();
-static int cwrite (int fd, byte* buf, int numbytes);
-static int cread (int fd, byte* buf, int numbytes);
 void enableDebug ();
 void disableDebug ();
 

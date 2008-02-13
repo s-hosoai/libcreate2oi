@@ -44,6 +44,10 @@
 static int fd = 0;			///< file descriptor for serial port
 static int debug = 0;			///< debug mode status
 
+static int cwrite (int fd, byte* buf, int numbytes);
+static int cread (int fd, byte* buf, int numbytes);
+static int stopWait();
+
 /** \brief Starts the OI.
  *
  * 	This command opens the serial connection and starts the Open Interface.  The Create
@@ -839,7 +843,7 @@ int getBumpsAndWheelDrops ()
 int getCliffs ()
 {
 	int cliffs[4];
-	byte i = 0;
+	int i = 0;
 	
 	cliffs[0] = readSensor (SENSOR_CLIFF_LEFT);
 	cliffs[1] = readSensor (SENSOR_CLIFF_FRONT_LEFT);
