@@ -843,18 +843,14 @@ int getBumpsAndWheelDrops ()
 int getCliffs ()
 {
 	int cliffs[4];
-	int i = 0;
 	
 	cliffs[0] = readSensor (SENSOR_CLIFF_LEFT);
 	cliffs[1] = readSensor (SENSOR_CLIFF_FRONT_LEFT);
 	cliffs[2] = readSensor (SENSOR_CLIFF_FRONT_RIGHT);
 	cliffs[3] = readSensor (SENSOR_CLIFF_RIGHT);
 	
-	for (i; i < 4; i++)
-	{
-		if (INT_MIN == cliffs[i])
-			return INT_MIN;
-	}
+	if (INT_MIN == cliffs[0]  || INT_MIN == cliffs[1] || INT_MIN == cliffs[2] || INT_MIN == cliffs[3])
+	    return INT_MIN;
 	
 	return (cliffs[0]*8 + cliffs[1]*4 + cliffs[2]*2 + cliffs[3]);
 }
