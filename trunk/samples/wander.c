@@ -30,8 +30,8 @@
  *	1.0 	12 Jan 2008	Initial public release
  */
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <cv.h>
+#include <highgui.h>
 #include <stdio.h>
 #include <createoi.h>
 

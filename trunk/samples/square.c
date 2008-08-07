@@ -30,14 +30,13 @@
 
 int main()
 {
-	int a;
-	startOI ("/dev/cu.KeySerial1");
-	enterSafeMode ();
+	startOI_MT ("/dev/ttyUSB0");
 	
-	while (1)
+	while(1)
 	{
-		driveDistance (300, 0, 1000);
-		turn (200, 1, 90);
+		driveDistance (300, 0, 200, 1);
+		turn (20, 1, 90, 1);
 	}
-	stopOI();
+
+	stopOI_MT();
 }
