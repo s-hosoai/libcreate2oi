@@ -1,12 +1,13 @@
 /** \file createoi.h
  *  \brief Header file for createoi.c.
  *
- *  Header file for createoi.c and for COIL.  #include this file in your program to make
- *  use of COIL functions.  This file contains signatures for the available CreateOI
- *  functions as well as definitions for the various datatypes used for them.  Info on
- *  the different types can be found in the included documentation.
+ *  Header file for createoi.c and for COIL.  #include this file in
+ *  your program to make use of COIL functions.  This file contains
+ *  signatures for the available CreateOI functions as well as
+ *  definitions for the various datatypes used for them.  Info on the
+ *  different types can be found in the included documentation.
  *
- *  \author	Jesse DeGuire
+ *  \authors	Jesse DeGuire, Nathan Sprague
  *
  * 
  *  This file is part of COIL.
@@ -27,12 +28,20 @@
  *
  *  Versions:
  *	1.0	12 Jan 2008	Initial public release
+ *      1.1     04 Aug 2008     Added multi-threaded mode. 
  */
 
 #ifndef H_CREATEOI_GD
 #define H_CREATEOI_GD
 
 #include <unistd.h>
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 
 /// 8-bit unsigned value.  Called "byte" to keep continuity with iRobot naming
 /// (and so I don't have to write "unsigned char" all the time).
@@ -77,9 +86,9 @@ typedef enum
 
 /** \brief Sensor packet constants
  *
- *  Contains constants for each of the 42 sensor packets available in the Create.  Note
- *  that not all packets are the same size.  Refer to the Create Open Interface documentation
- *  for more info.
+ *  Contains constants for each of the 42 sensor packets available in
+ *  the Create.  Note that not all packets are the same size.  Refer
+ *  to the Create Open Interface documentation for more info.
  */
 typedef enum
 {
@@ -128,8 +137,8 @@ typedef enum
 
 /** \brief  Baud Rate Codes
  *
- *  Codes to set the baud rate, in bits per second, at which data is sent over the serial
- *  port.  Use with the Baud command.
+ *  Codes to set the baud rate, in bits per second, at which data is
+ *  sent over the serial port.  Use with the Baud command.
  */
 typedef enum
 {
@@ -150,7 +159,7 @@ typedef enum
  /** \brief Demo codes
  *
  *  Codes for the built-in demos.  Use these with the Demo command.
-  */
+ */
 typedef enum
 {
 	DEMO_COVER,
@@ -168,7 +177,8 @@ typedef enum
 
 /** \brief LED switches
  *
- *  Used for turning off and on the LEDs on top of the Create.  Use with the LEDs command.
+ *  Used for turning off and on the LEDs on top of the Create.  Use
+ *  with the LEDs command.
  */
 typedef enum
 {
@@ -178,7 +188,8 @@ typedef enum
 
 /** \brief Output switches
  *
- *  Used for setting the the state of the digital and lowside outputs on the Cargo Bay connector.
+ *  Used for setting the the state of the digital and lowside outputs
+ *  on the Cargo Bay connector.
  */
 typedef enum
 {
@@ -189,6 +200,7 @@ typedef enum
 
 
 int startOI (char* serial);
+int startOI_MT (char* serial);
 int setBaud (oi_baud rate);
 int enterSafeMode ();
 int enterFullMode ();
@@ -213,6 +225,7 @@ int getDistance ();
 int getAngle ();
 int getVelocity ();
 int getTurningRadius ();
+int getOvercurrent ();
 int getBumpsAndWheelDrops ();
 int getCliffs ();
 int* getAllSensors ();
@@ -224,7 +237,14 @@ double waitTime (double time);
 int waitDistance (int dist, int interrupt);
 int waitAngle (int angle, int interrupt);
 int stopOI ();
+int stopOI_MT ();
 void enableDebug ();
 void disableDebug ();
+
+#ifdef __cplusplus
+} /* closing brace for extern "C" */
+#endif
+
+
 
 #endif //H_CREATEOI_GD

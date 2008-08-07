@@ -7,7 +7,7 @@
 #
 
 AR = ar
-CC = gcc
+CC = gcc -g
 INSTALL = /usr/local/lib
 INCLUDE = /usr/local/include
 
@@ -22,10 +22,10 @@ install: src/libcreateoi.a src/createoi.h
 
 all: src/createoi.o
 	$(AR) rcs src/libcreateoi.a $<
-	
+
 src/createoi.o: src/createoi.c src/createoi.h
 	$(CC) -c -o src/createoi.o $<
-	
+
 uninstall:
 	rm $(INSTALL)/libcreateoi.a
 	rm $(INCLUDE)/createoi.h
@@ -35,6 +35,5 @@ docs:
 	manual.tex in the docs/ directory.
 
 clean:
-	@echo Not yet supported.
-
-	
+	rm src/libcreateoi.a
+	rm src/createoi.o
