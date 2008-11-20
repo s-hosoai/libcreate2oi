@@ -199,8 +199,8 @@ typedef enum
 } oi_output;
 
 
-int startOI (char* serial);
-int startOI_MT (char* serial);
+int startOI (const char* serial);
+int startOI_MT (const char* serial);
 int setBaud (oi_baud rate);
 int enterSafeMode ();
 int enterFullMode ();
