@@ -108,7 +108,7 @@ double getTime(){
  *
  *  \return		0 if successful or -1 otherwise
  */
-int startOI (char* serial)
+int startOI (const char* serial)
 {
 	struct termios options;
 	byte cmd[1];
@@ -142,6 +142,8 @@ int startOI (char* serial)
 	enterPassiveMode();//sends start signal 
 	
 	enterSafeMode ();
+
+
 	setLEDState (0, 128, 255);
 
 	return 0;
@@ -159,7 +161,7 @@ int startOI (char* serial)
  *
  *  \return		0 if successful or -1 otherwise
  */
-int startOI_MT (char* serial)
+int startOI_MT (const char* serial)
 {
 	if (startOI(serial) != 0)
 		return -1;
@@ -1565,13 +1567,14 @@ int waitAngle (int angle, int interrupt)
  */
 int stopOI ()
 {		
-	enterPassiveMode();
-
 	if (directDrive (0, 0) < 0)
 	{
 		perror ("Could not stop OI\n");
 		return -1;
 	}
+
+	enterPassiveMode();
+
 
 	pthread_mutex_destroy(&create_mutex);
 
