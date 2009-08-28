@@ -45,7 +45,8 @@
 
 #define MAX(a,b)	(a > b? a : b)
 #define MIN(a,b)	(a < b? a : b)
-#define CYCLE_TIME 20000  //delay (in mircoseconds) between readings in MT mode.
+#define CYCLE_TIME 120000  //delay (in mircoseconds) between reads in MT mode.
+#define OVERCURRENT_WAIT .3 //time in seconds to allow overcurrent
 
 static int fd = 0;			///< file descriptor for serial port
 static int debug = 0;			///< debug mode status
@@ -1455,18 +1456,29 @@ double waitTime (double time)
  */
 static int stopWait()
 {
-  int shouldStop=0;
-  static int overCurrentCount = 0;
-
-  if (getOvercurrent() > 0) 
-    overCurrentCount++;
-  else
-    overCurrentCount = 0;
-  
-  if (overCurrentCount > 4){
-    shouldStop++;
-    overCurrentCount = 0;
-  }
+	int shouldStop=0;
+	static int overCurrentOn = 0;
+	static double overCurrentStart = 0;
+	if (getOvercurrent() > 0) {
+		if (overCurrentOn == 1) 
+		{
+			if  ((getTime() - overCurrentStart) > OVERCURRENT_WAIT) 
+			{
+				shouldStop++;
+				overCurrentOn = 0;
+			}
+		} 
+		else 
+		{
+			overCurrentOn = 1;
+			overCurrentStart = getTime();
+		}
+	} 
+	else 
+	{
+		overCurrentOn = 0;
+	}
+	
 
   shouldStop += getBumpsAndWheelDrops() + getCliffs();
   
