@@ -134,8 +134,8 @@ int startOI (const char* serial)
                 //give raw data path
 		cfmakeraw (&options);
 		//set baud
-		cfsetispeed (&options, B57600);			
-		cfsetospeed (&options, B57600);
+		cfsetispeed (&options, B115200);			
+		cfsetospeed (&options, B115200);
 		//send options back to fd
 		tcsetattr (fd, TCSANOW, &options);		
 	}
