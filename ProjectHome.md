@@ -1,0 +1,5 @@
+This library is a C wrapper for the Open Interface opcodes provided with the iRobot Create. What that means is that the user calls a C function to make the robot do something, which internally sends the Create the proper opcodes to make that happen. Additional functionality not found in the Create OI is included as well as a convenience to the user. This makes programming against the Create much easier than having to send opcodes on your own, while allowing the user to perform more advanced tasks and leverage the many C libraries available.
+
+COIL can be run on any POSIX-compliant operating system, such as Linux and Mac OSX. It is possible to connect a small laptop or even smaller computers such as the Gumstix series to the Create to make it a fully-functioning system. A Windows version of the library is not yet available, but is planned.
+
+You can find more information on the Create on iRobot's [Create page](http://www.irobot.com/sp.cfm?pageid=305).  The Create Open Interface Specification is available from iRobot [here](http://www.irobot.com/filelibrary/create/Create%20Open%20Interface_v2.pdf).
