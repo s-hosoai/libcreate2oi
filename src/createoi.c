@@ -659,6 +659,7 @@ int setLEDState (oi_led lflags, byte pColor, byte pInten)
  *
  * 	\return		0 if successful or -1 otherwise
  */
+/* Removed.
 int setDigitalOuts (oi_output oflags)
 {
 	byte cmd[2];
@@ -676,7 +677,7 @@ int setDigitalOuts (oi_output oflags)
 	pthread_mutex_unlock( &create_mutex );
 	return 0;
 }
-
+*/
 /** \brief	Control low side drivers with variable power
  *
  * 	Specifies the PWM (pulse width modulation) duty cycle for each
@@ -759,6 +760,7 @@ int setLowSideDrivers (oi_output oflags)
  *
  * 	\return 	0 if successfull or -1 otherwise
  */
+/* Removed.
 int sendIRbyte (byte irbyte)
 {
 	byte cmd[2];
@@ -775,7 +777,7 @@ int sendIRbyte (byte irbyte)
 	pthread_mutex_unlock( &create_mutex );
 	return 0;
 }
-
+*/
 /** \brief	Create and store a small song
  *
  * 	Writes and stores a small song into the Create's internal
@@ -930,7 +932,7 @@ int readSensor (oi_sensor packet)
 		case SENSOR_INFRARED:
 		case SENSOR_BUTTONS:
 		case SENSOR_CHARGING_STATE:
-		case SENSOR_DIGITAL_INPUTS:
+//		case SENSOR_DIGITAL_INPUTS:
 		case SENSOR_CHARGING_SOURCES_AVAILABLE:
 		case SENSOR_OI_MODE:
 		case SENSOR_SONG_NUMBER:
@@ -971,7 +973,7 @@ int readSensor (oi_sensor packet)
 		case SENSOR_CLIFF_FRONT_LEFT_SIGNAL:
 		case SENSOR_CLIFF_FRONT_RIGHT_SIGNAL:
 		case SENSOR_CLIFF_RIGHT_SIGNAL:
-		case SENSOR_ANALOG_SIGNAL:
+//		case SENSOR_ANALOG_SIGNAL:
 			buffer = (byte*) malloc (2 * sizeof(byte));
 			if (NULL == buffer)
 				return INT_MIN;
@@ -1328,6 +1330,7 @@ int readRawSensorList (oi_sensor* packet_list, byte num_packets,
  * 
  * 	\return		0 if successful or -1 otherwise
  */
+/* Removed.
 int writeScript (byte* script, byte size)
 {
 	int i;
@@ -1347,7 +1350,7 @@ int writeScript (byte* script, byte size)
 	pthread_mutex_unlock( &create_mutex );
 	return 0;
 }
-
+*/
 /** \brief	Plays currently stored script
  * 
  * 	Loads the script that was written to the Create's internal
@@ -1356,6 +1359,7 @@ int writeScript (byte* script, byte size)
  * 
  * 	\return		0 if successful or -1 otherwise
  */
+/* Removed.
 int playScript ()
 {
 	byte cmd[1];
@@ -1371,6 +1375,7 @@ int playScript ()
 	pthread_mutex_unlock( &create_mutex );
 	return 0;
 }
+*/
 
 /**	\brief	Get script from Create
  * 
@@ -1380,6 +1385,7 @@ int playScript ()
  * 
  * 	\return		Pointer to script or NULL on failure
  */
+/* Removed.
 byte* getScript ()
 {
 	byte* script;
@@ -1417,7 +1423,7 @@ byte* getScript ()
 	
 	return script;
 }
-
+*/
 /** \brief  Waits for the given amount of time
  *
  *  Waits the given amount of time, in seconds.  This timer has a
